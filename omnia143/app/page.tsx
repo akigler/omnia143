@@ -240,7 +240,7 @@ export default function Home() {
       setAudioCurrentTime(0)
     }
 
-    const handleError = (e) => {
+    const handleError = (e: Event) => {
       console.error('Audio error:', e)
     }
 
