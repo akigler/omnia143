@@ -240,16 +240,32 @@ export default function Home() {
 
     const handleError = (e: Event) => {
       console.error('Audio error:', e)
+      console.error('Audio src:', audio.src)
+      console.error('Audio readyState:', audio.readyState)
+    }
+
+    const handleLoadedMetadata = () => {
+      console.log('Audio metadata loaded, duration:', audio.duration)
+      setAudioDuration(audio.duration)
+    }
+
+    const handleCanPlay = () => {
+      console.log('Audio can play, duration:', audio.duration)
+      setAudioDuration(audio.duration)
     }
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
     audio.addEventListener('ended', handleEnded)
     audio.addEventListener('error', handleError)
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+    audio.addEventListener('canplay', handleCanPlay)
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate)
       audio.removeEventListener('ended', handleEnded)
       audio.removeEventListener('error', handleError)
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.removeEventListener('canplay', handleCanPlay)
     }
   }, [activeModal])
 
@@ -354,7 +370,7 @@ export default function Home() {
               <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden">
                 <img
                   src="/images/ghostrunner.jpg"
-                  alt="Audio Background"
+                  alt="Ghostrunner Audio Story"
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     console.error('Image failed to load:', e);
@@ -379,8 +395,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">Audio Story</h3>
-              <p className="text-gray-600 mb-6">Immerse yourself in this enchanting audio experience</p>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Ghostrunner Soundtrack</h3>
+              <p className="text-gray-600 mb-6">Experience the atmospheric sounds of Ghostrunner's cyberpunk world</p>
 
               {/* Audio Player */}
               <div className="space-y-4">
@@ -414,9 +430,11 @@ export default function Home() {
                 ref={audioRef}
                 src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
                 preload="metadata"
+                crossOrigin="anonymous"
                 onError={(e) => {
                   console.error('Audio failed to load:', e);
                   console.error('Audio src:', e.currentTarget.src);
+                  console.error('Audio error details:', e.currentTarget.error);
                 }}
                 onLoadStart={() => {
                   console.log('Audio loading started');
@@ -428,6 +446,12 @@ export default function Home() {
                 onLoadedMetadata={(e) => {
                   console.log('Audio metadata loaded, duration:', e.currentTarget.duration);
                   setAudioDuration(e.currentTarget.duration);
+                }}
+                onLoadedData={() => {
+                  console.log('Audio data loaded');
+                }}
+                onProgress={() => {
+                  console.log('Audio loading progress');
                 }}
               />
             </div>
