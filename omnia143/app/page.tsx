@@ -134,6 +134,7 @@ export default function Home() {
   const [audioProgress, setAudioProgress] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
+  const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null)
 
   const handlePlanetClick = (planet: PlanetData) => {
     setSelectedPlanet(planet)
@@ -194,7 +195,14 @@ export default function Home() {
   }
 
   const togglePlayPause = () => {
-    setIsPlaying(!isPlaying)
+    if (audioRef) {
+      if (isPlaying) {
+        audioRef.pause()
+      } else {
+        audioRef.play()
+      }
+      setIsPlaying(!isPlaying)
+    }
   }
 
   return (
@@ -348,6 +356,7 @@ export default function Home() {
               <audio
                 ref={(audio) => {
                   if (audio) {
+                    setAudioRef(audio)
                     audio.addEventListener('timeupdate', () => {
                       setAudioCurrentTime(audio.currentTime)
                       setAudioProgress((audio.currentTime / audio.duration) * 100)
@@ -360,11 +369,6 @@ export default function Home() {
                       setAudioProgress(0)
                       setAudioCurrentTime(0)
                     })
-                    if (isPlaying) {
-                      audio.play()
-                    } else {
-                      audio.pause()
-                    }
                   }
                 }}
                 src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
@@ -410,9 +414,9 @@ export default function Home() {
                   </div>
                   
                   {/* Story Text */}
-                  <div className="text-amber-900 leading-relaxed text-base">
+                  <div className="text-amber-900 leading-relaxed text-base font-serif">
                     {placeholderStories[currentStory]?.content.split('\n').map((paragraph, index) => (
-                      <p key={index} className="mb-4 text-justify">
+                      <p key={index} className="mb-4 text-justify" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                         {paragraph}
                       </p>
                     ))}
