@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ScrollText, Eye, Headphones, Play, Pause, SkipBack, SkipForward } from "lucide-react"
 import NavigationCrystal from "@/components/NavigationCrystal"
 
@@ -134,7 +134,8 @@ export default function Home() {
   const [audioProgress, setAudioProgress] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
-  const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   const handlePlanetClick = (planet: PlanetData) => {
     setSelectedPlanet(planet)
@@ -194,16 +195,55 @@ export default function Home() {
     setSelectedPlanet(null)
   }
 
-  const togglePlayPause = () => {
-    if (audioRef) {
-      if (isPlaying) {
-        audioRef.pause()
-      } else {
-        audioRef.play()
+  const togglePlayPause = async () => {
+    if (audioRef.current) {
+      try {
+        if (isPlaying) {
+          audioRef.current.pause()
+          setIsPlaying(false)
+        } else {
+          await audioRef.current.play()
+          setIsPlaying(true)
+        }
+      } catch (error) {
+        console.error('Audio playback error:', error)
       }
-      setIsPlaying(!isPlaying)
     }
   }
+
+  // Handle audio events
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const handleTimeUpdate = () => {
+      if (audio.duration) {
+        setAudioCurrentTime(audio.currentTime)
+        setAudioProgress((audio.currentTime / audio.duration) * 100)
+      }
+    }
+
+    const handleLoadedMetadata = () => {
+      setAudioDuration(audio.duration)
+      console.log('Audio loaded, duration:', audio.duration)
+    }
+
+    const handleEnded = () => {
+      setIsPlaying(false)
+      setAudioProgress(0)
+      setAudioCurrentTime(0)
+    }
+
+    audio.addEventListener('timeupdate', handleTimeUpdate)
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+    audio.addEventListener('ended', handleEnded)
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate)
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.removeEventListener('ended', handleEnded)
+    }
+  }, [activeModal]) // Re-run when modal opens
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden">
@@ -304,22 +344,24 @@ export default function Home() {
             <div className="text-center">
               {/* Background Image */}
               <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden">
+                {!imageLoaded && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                    <div className="text-white text-6xl">🎵</div>
+                  </div>
+                )}
                 <img
                   src="/images/ghostrunner.jpg"
                   alt="Audio Background"
                   className="w-full h-full object-cover"
-                  onLoad={() => console.log('Image loaded successfully')}
+                  onLoad={() => {
+                    console.log('Image loaded successfully')
+                    setImageLoaded(true)
+                  }}
                   onError={(e) => {
                     console.log('Image failed to load:', e.currentTarget.src)
-                    e.currentTarget.style.display = 'none'
-                    // Show fallback when image fails
-                    const fallback = e.currentTarget.nextElementSibling as HTMLElement
-                    if (fallback) fallback.style.display = 'flex'
+                    setImageLoaded(false)
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center" style={{ display: 'none' }}>
-                  <div className="text-white text-6xl">🎵</div>
-                </div>
               </div>
 
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Audio Story</h3>
@@ -354,23 +396,7 @@ export default function Home() {
 
               {/* Hidden Audio Element */}
               <audio
-                ref={(audio) => {
-                  if (audio) {
-                    setAudioRef(audio)
-                    audio.addEventListener('timeupdate', () => {
-                      setAudioCurrentTime(audio.currentTime)
-                      setAudioProgress((audio.currentTime / audio.duration) * 100)
-                    })
-                    audio.addEventListener('loadedmetadata', () => {
-                      setAudioDuration(audio.duration)
-                    })
-                    audio.addEventListener('ended', () => {
-                      setIsPlaying(false)
-                      setAudioProgress(0)
-                      setAudioCurrentTime(0)
-                    })
-                  }
-                }}
+                ref={audioRef}
                 src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
                 preload="metadata"
               />
@@ -414,9 +440,17 @@ export default function Home() {
                   </div>
                   
                   {/* Story Text */}
-                  <div className="text-amber-900 leading-relaxed text-base font-serif">
+                  <div className="text-amber-900 leading-relaxed text-base font-serif" style={{ 
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                    textRendering: 'optimizeLegibility'
+                  }}>
                     {placeholderStories[currentStory]?.content.split('\n').map((paragraph, index) => (
-                      <p key={index} className="mb-4 text-justify" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                      <p key={index} className="mb-4 text-justify" style={{ 
+                        textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                        WebkitFontSmoothing: 'antialiased',
+                        MozOsxFontSmoothing: 'grayscale'
+                      }}>
                         {paragraph}
                       </p>
                     ))}
