@@ -135,7 +135,6 @@ export default function Home() {
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
-  const [imageLoaded, setImageLoaded] = useState(true)
 
   const handlePlanetClick = (planet: PlanetData) => {
     setSelectedPlanet(planet)
@@ -216,7 +215,12 @@ export default function Home() {
     if (activeModal !== 'audio') return
 
     const audio = audioRef.current
-    if (!audio) return
+    if (!audio) {
+      console.log('No audio element found')
+      return
+    }
+
+    console.log('Setting up audio events for:', audio.src)
 
     const handleTimeUpdate = () => {
       if (audio.duration) {
@@ -226,6 +230,7 @@ export default function Home() {
     }
 
     const handleLoadedMetadata = () => {
+      console.log('Audio metadata loaded, duration:', audio.duration)
       setAudioDuration(audio.duration)
     }
 
@@ -235,14 +240,20 @@ export default function Home() {
       setAudioCurrentTime(0)
     }
 
+    const handleError = (e) => {
+      console.error('Audio error:', e)
+    }
+
     audio.addEventListener('timeupdate', handleTimeUpdate)
     audio.addEventListener('loadedmetadata', handleLoadedMetadata)
     audio.addEventListener('ended', handleEnded)
+    audio.addEventListener('error', handleError)
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate)
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
       audio.removeEventListener('ended', handleEnded)
+      audio.removeEventListener('error', handleError)
     }
   }, [activeModal])
 
@@ -349,14 +360,7 @@ export default function Home() {
                   src="/images/ghostrunner.jpg"
                   alt="Audio Background"
                   className="w-full h-full object-cover"
-                  onLoad={() => setImageLoaded(true)}
-                  onError={() => setImageLoaded(false)}
                 />
-                {!imageLoaded && (
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                    <div className="text-white text-6xl">🎵</div>
-                  </div>
-                )}
               </div>
 
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Audio Story</h3>
