@@ -82,16 +82,16 @@
     @apply bg-background text-foreground;
   }
   
-  /* PWA Status Bar Styling */
-  html {
-    background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
-  }
-  
-  /* Handle safe area for notched devices */
-  body {
-    padding-top: env(safe-area-inset-top);
-    background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
-  }
+          /* PWA Status Bar Styling */
+          html {
+            background: #1e3a8a;
+          }
+          
+          /* Handle safe area for notched devices */
+          body {
+            padding-top: env(safe-area-inset-top);
+            background: #1e3a8a;
+          }
 }
 
 /* Custom scrollbar for better accessibility */

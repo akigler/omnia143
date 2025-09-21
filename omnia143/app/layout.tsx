@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Omnia - Enchanted Story Realms',
   description: 'Journey through enchanted realms of stories, audio adventures, and visual tales under the starlit sky',
   manifest: '/manifest.json',
-  themeColor: '#0f172a',
+      themeColor: '#1e3a8a',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
   appleWebApp: {
     capable: true,
