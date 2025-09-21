@@ -131,6 +131,9 @@ export default function Home() {
   const [currentStory, setCurrentStory] = useState<number>(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentAudio, setCurrentAudio] = useState(0)
+  const [audioProgress, setAudioProgress] = useState(0)
+  const [audioDuration, setAudioDuration] = useState(0)
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0)
 
   const handlePlanetClick = (planet: PlanetData) => {
     setSelectedPlanet(planet)
@@ -188,6 +191,10 @@ export default function Home() {
     setIsModalOpen(false)
     setActiveModal(null)
     setSelectedPlanet(null)
+  }
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying)
   }
 
   return (
@@ -277,71 +284,93 @@ export default function Home() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
           
-          <div className="relative z-10 bg-white rounded-2xl p-8 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Audio Stories</h3>
-            
-            <div className="space-y-4">
-              {placeholderAudio.map((audio, index) => (
-                <div
-                  key={audio.id}
-                  className={`flex items-center p-4 rounded-lg border-2 transition-all ${
-                    currentAudio === index ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="text-4xl mr-4">{audio.cover}</div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800">{audio.title}</h4>
-                    <p className="text-sm text-gray-600">{audio.description}</p>
-                    <p className="text-xs text-gray-500">{audio.duration}</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setCurrentAudio(index)
-                      setIsPlaying(!isPlaying)
-                    }}
-                    className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
-                  >
-                    {isPlaying && currentAudio === index ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Audio Controls */}
-            {isPlaying && (
-              <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    {placeholderAudio[currentAudio]?.title}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {placeholderAudio[currentAudio]?.duration}
-                  </span>
-                </div>
-                <div className="flex items-center justify-center space-x-4">
-                  <button className="p-2 hover:bg-gray-200 rounded-full">
-                    <SkipBack className="w-5 h-5 text-gray-600" />
-                  </button>
-                  <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-                  >
-                    {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-                  </button>
-                  <button className="p-2 hover:bg-gray-200 rounded-full">
-                    <SkipForward className="w-5 h-5 text-gray-600" />
-                  </button>
-                </div>
-              </div>
-            )}
-
+          <div className="relative z-10 bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition-colors"
               aria-label="Close modal"
             >
               ×
             </button>
+            
+            <div className="text-center">
+              {/* Background Image */}
+              <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden">
+                <img
+                  src="/images/ghostrunner.jpg"
+                  alt="Audio Background"
+                  className="w-full h-full object-cover"
+                  onLoad={() => console.log('Image loaded successfully')}
+                  onError={(e) => {
+                    console.log('Image failed to load:', e.currentTarget.src)
+                    e.currentTarget.style.display = 'none'
+                    // Show fallback when image fails
+                    const fallback = e.currentTarget.nextElementSibling as HTMLElement
+                    if (fallback) fallback.style.display = 'flex'
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center" style={{ display: 'none' }}>
+                  <div className="text-white text-6xl">🎵</div>
+                </div>
+              </div>
+
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Audio Story</h3>
+              <p className="text-gray-600 mb-6">Immerse yourself in this enchanting audio experience</p>
+
+              {/* Audio Player */}
+              <div className="space-y-4">
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${audioProgress}%` }}
+                  ></div>
+                </div>
+                
+                {/* Time Display */}
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>{Math.floor(audioCurrentTime / 60)}:{('0' + Math.floor(audioCurrentTime % 60)).slice(-2)}</span>
+                  <span>{Math.floor(audioDuration / 60)}:{('0' + Math.floor(audioDuration % 60)).slice(-2)}</span>
+                </div>
+
+                {/* Play/Pause Button */}
+                <div className="flex justify-center">
+                  <button 
+                    onClick={togglePlayPause} 
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-6 shadow-lg hover:scale-105 transition-transform"
+                  >
+                    {isPlaying ? <Pause className="w-12 h-12" /> : <Play className="w-12 h-12" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Hidden Audio Element */}
+              <audio
+                ref={(audio) => {
+                  if (audio) {
+                    audio.addEventListener('timeupdate', () => {
+                      setAudioCurrentTime(audio.currentTime)
+                      setAudioProgress((audio.currentTime / audio.duration) * 100)
+                    })
+                    audio.addEventListener('loadedmetadata', () => {
+                      setAudioDuration(audio.duration)
+                    })
+                    audio.addEventListener('ended', () => {
+                      setIsPlaying(false)
+                      setAudioProgress(0)
+                      setAudioCurrentTime(0)
+                    })
+                    if (isPlaying) {
+                      audio.play()
+                    } else {
+                      audio.pause()
+                    }
+                  }
+                }}
+                src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
+                preload="metadata"
+              />
+            </div>
           </div>
         </div>
       )}
