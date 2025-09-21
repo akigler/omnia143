@@ -410,7 +410,7 @@ export default function Home() {
                   </div>
                   
                   {/* Story Text */}
-                  <div className="prose prose-lg max-w-none text-amber-900 leading-relaxed">
+                  <div className="text-amber-900 leading-relaxed text-base">
                     {placeholderStories[currentStory]?.content.split('\n').map((paragraph, index) => (
                       <p key={index} className="mb-4 text-justify">
                         {paragraph}
