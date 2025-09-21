@@ -374,6 +374,7 @@ export default function Home() {
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     console.error('Image failed to load:', e);
+                    console.error('Image src:', e.currentTarget.src);
                     e.currentTarget.style.display = 'none';
                     // Show fallback when image fails
                     const fallback = e.currentTarget.nextElementSibling as HTMLElement;
@@ -390,7 +391,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center" style={{ display: 'none' }}>
                   <div className="text-white text-center">
                     <div className="text-4xl mb-2">🎵</div>
-                    <div className="text-sm">Audio Story</div>
+                    <div className="text-sm">Ghostrunner Soundtrack</div>
                   </div>
                 </div>
               </div>
@@ -428,7 +429,7 @@ export default function Home() {
               {/* Hidden Audio Element */}
               <audio
                 ref={audioRef}
-                src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
+                src="/audio/ghostrunner-soundtrack.mp3"
                 preload="metadata"
                 crossOrigin="anonymous"
                 onError={(e) => {
