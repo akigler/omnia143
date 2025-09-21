@@ -221,6 +221,9 @@ export default function Home() {
     }
 
     console.log('Setting up audio events for:', audio.src)
+    
+    // Force reload the audio when modal opens
+    audio.load()
 
     const handleTimeUpdate = () => {
       if (audio.duration) {
@@ -360,6 +363,13 @@ export default function Home() {
                   src="/images/ghostrunner.jpg"
                   alt="Audio Background"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Image failed to load:', e);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded successfully');
+                  }}
                 />
               </div>
 
@@ -398,6 +408,15 @@ export default function Home() {
                 ref={audioRef}
                 src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
                 preload="metadata"
+                onError={(e) => {
+                  console.error('Audio failed to load:', e);
+                }}
+                onLoadStart={() => {
+                  console.log('Audio loading started');
+                }}
+                onCanPlay={() => {
+                  console.log('Audio can play');
+                }}
               />
             </div>
           </div>
