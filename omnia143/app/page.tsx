@@ -224,25 +224,12 @@ export default function Home() {
     
     // Force reload the audio when modal opens
     audio.load()
-    
-    // Set up a timeout to check if audio loaded
-    const checkAudioLoad = setTimeout(() => {
-      if (audio.duration === 0 || isNaN(audio.duration)) {
-        console.warn('Audio still not loaded after timeout, trying to reload...');
-        audio.load();
-      }
-    }, 2000);
 
     const handleTimeUpdate = () => {
-      if (audio.duration) {
+      if (audio.duration && !isNaN(audio.duration)) {
         setAudioCurrentTime(audio.currentTime)
         setAudioProgress((audio.currentTime / audio.duration) * 100)
       }
-    }
-
-    const handleLoadedMetadata = () => {
-      console.log('Audio metadata loaded, duration:', audio.duration)
-      setAudioDuration(audio.duration)
     }
 
     const handleEnded = () => {
@@ -256,14 +243,11 @@ export default function Home() {
     }
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
     audio.addEventListener('ended', handleEnded)
     audio.addEventListener('error', handleError)
 
     return () => {
-      clearTimeout(checkAudioLoad)
       audio.removeEventListener('timeupdate', handleTimeUpdate)
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
       audio.removeEventListener('ended', handleEnded)
       audio.removeEventListener('error', handleError)
     }
@@ -367,7 +351,7 @@ export default function Home() {
             
             <div className="text-center">
               {/* Background Image */}
-              <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+              <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden">
                 <img
                   src="/images/ghostrunner.jpg"
                   alt="Audio Background"
@@ -375,13 +359,19 @@ export default function Home() {
                   onError={(e) => {
                     console.error('Image failed to load:', e);
                     e.currentTarget.style.display = 'none';
+                    // Show fallback when image fails
+                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.style.display = 'flex';
                   }}
-                  onLoad={() => {
+                  onLoad={(e) => {
                     console.log('Image loaded successfully');
+                    // Hide fallback when image loads
+                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.style.display = 'none';
                   }}
                 />
-                {/* Fallback gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                {/* Fallback gradient background - hidden by default */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center" style={{ display: 'none' }}>
                   <div className="text-white text-center">
                     <div className="text-4xl mb-2">🎵</div>
                     <div className="text-sm">Audio Story</div>
@@ -423,8 +413,7 @@ export default function Home() {
               <audio
                 ref={audioRef}
                 src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
-                preload="auto"
-                crossOrigin="anonymous"
+                preload="metadata"
                 onError={(e) => {
                   console.error('Audio failed to load:', e);
                   console.error('Audio src:', e.currentTarget.src);
@@ -434,9 +423,11 @@ export default function Home() {
                 }}
                 onCanPlay={(e) => {
                   console.log('Audio can play, duration:', e.currentTarget.duration);
+                  setAudioDuration(e.currentTarget.duration);
                 }}
                 onLoadedMetadata={(e) => {
                   console.log('Audio metadata loaded, duration:', e.currentTarget.duration);
+                  setAudioDuration(e.currentTarget.duration);
                 }}
               />
             </div>
