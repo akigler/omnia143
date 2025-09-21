@@ -135,7 +135,7 @@ export default function Home() {
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(true)
 
   const handlePlanetClick = (planet: PlanetData) => {
     setSelectedPlanet(planet)
@@ -213,6 +213,8 @@ export default function Home() {
 
   // Handle audio events
   useEffect(() => {
+    if (activeModal !== 'audio') return
+
     const audio = audioRef.current
     if (!audio) return
 
@@ -225,7 +227,6 @@ export default function Home() {
 
     const handleLoadedMetadata = () => {
       setAudioDuration(audio.duration)
-      console.log('Audio loaded, duration:', audio.duration)
     }
 
     const handleEnded = () => {
@@ -243,7 +244,7 @@ export default function Home() {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [activeModal]) // Re-run when modal opens
+  }, [activeModal])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden">
@@ -330,7 +331,7 @@ export default function Home() {
       {/* Audio Modal */}
       {activeModal === 'audio' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
+          <div className="absolute inset-0 bg-black/60" onClick={closeModal} />
           
           <div className="relative z-10 bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <button
@@ -344,24 +345,18 @@ export default function Home() {
             <div className="text-center">
               {/* Background Image */}
               <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden">
+                <img
+                  src="/images/ghostrunner.jpg"
+                  alt="Audio Background"
+                  className="w-full h-full object-cover"
+                  onLoad={() => setImageLoaded(true)}
+                  onError={() => setImageLoaded(false)}
+                />
                 {!imageLoaded && (
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
                     <div className="text-white text-6xl">🎵</div>
                   </div>
                 )}
-                <img
-                  src="/images/ghostrunner.jpg"
-                  alt="Audio Background"
-                  className="w-full h-full object-cover"
-                  onLoad={() => {
-                    console.log('Image loaded successfully')
-                    setImageLoaded(true)
-                  }}
-                  onError={(e) => {
-                    console.log('Image failed to load:', e.currentTarget.src)
-                    setImageLoaded(false)
-                  }}
-                />
               </div>
 
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Audio Story</h3>
@@ -408,7 +403,7 @@ export default function Home() {
       {/* Scroll Modal */}
       {activeModal === 'scroll' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
+          <div className="absolute inset-0 bg-black/60" onClick={closeModal} />
           
           <div className="relative z-10 max-w-2xl w-full mx-4 max-h-[80vh]">
             {/* Scroll Container with Rolled Edges */}
@@ -429,7 +424,7 @@ export default function Home() {
               </div>
 
               {/* Main Parchment Area */}
-              <div className="parchment-scroll p-8 pt-20 pb-20 shadow-2xl max-h-[60vh] overflow-y-auto">
+              <div className="parchment-scroll p-8 pt-20 pb-20 max-h-[60vh] overflow-y-auto">
                 {/* Story Content - Directly show the story */}
                 <div className="space-y-6">
                   {/* Story Title */}
@@ -440,16 +435,30 @@ export default function Home() {
                   </div>
                   
                   {/* Story Text */}
-                  <div className="text-amber-900 leading-relaxed text-base font-serif" style={{ 
-                    WebkitFontSmoothing: 'antialiased',
-                    MozOsxFontSmoothing: 'grayscale',
-                    textRendering: 'optimizeLegibility'
+                  <div style={{
+                    color: '#92400e',
+                    fontSize: '18px',
+                    lineHeight: '1.6',
+                    fontFamily: 'Arial, sans-serif',
+                    fontWeight: 'normal',
+                    textAlign: 'justify',
+                    WebkitFontSmoothing: 'none',
+                    MozOsxFontSmoothing: 'unset',
+                    textRendering: 'auto',
+                    textShadow: 'none',
+                    fontSmooth: 'never'
                   }}>
                     {placeholderStories[currentStory]?.content.split('\n').map((paragraph, index) => (
-                      <p key={index} className="mb-4 text-justify" style={{ 
-                        textShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                        WebkitFontSmoothing: 'antialiased',
-                        MozOsxFontSmoothing: 'grayscale'
+                      <p key={index} style={{
+                        marginBottom: '16px',
+                        marginTop: '0',
+                        padding: '0',
+                        textAlign: 'justify',
+                        WebkitFontSmoothing: 'none',
+                        MozOsxFontSmoothing: 'unset',
+                        textRendering: 'auto',
+                        textShadow: 'none',
+                        fontSmooth: 'never'
                       }}>
                         {paragraph}
                       </p>

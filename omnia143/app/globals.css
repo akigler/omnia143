@@ -102,97 +102,40 @@
   background: rgba(245, 158, 11, 0.8);
 }
 
+/* CRISP TEXT - NO BLUR */
+.parchment-scroll {
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: unset !important;
+  text-rendering: auto !important;
+  font-smooth: never !important;
+}
+
+.parchment-scroll * {
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: unset !important;
+  text-rendering: auto !important;
+  text-shadow: none !important;
+  font-smooth: never !important;
+}
+
 /* Parchment scroll styling */
 .parchment-scroll {
-  background: linear-gradient(135deg, #f4f1e8 0%, #e8e0d0 100%);
+  background: #f4f1e8;
   border: 2px solid #d4c4a8;
-  box-shadow: 
-    0 0 20px rgba(0, 0, 0, 0.1),
-    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  /* REMOVED BOX-SHADOW - CAUSES BLUR */
   position: relative;
   border-radius: 0;
-  /* Fix text rendering */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  clip-path: polygon(
-    0% 0%, 
-    5% 0%, 
-    10% 2%, 
-    15% 0%, 
-    20% 2%, 
-    25% 0%, 
-    30% 2%, 
-    35% 0%, 
-    40% 2%, 
-    45% 0%, 
-    50% 2%, 
-    55% 0%, 
-    60% 2%, 
-    65% 0%, 
-    70% 2%, 
-    75% 0%, 
-    80% 2%, 
-    85% 0%, 
-    90% 2%, 
-    95% 0%, 
-    100% 0%, 
-    100% 100%, 
-    95% 100%, 
-    90% 98%, 
-    85% 100%, 
-    80% 98%, 
-    75% 100%, 
-    70% 98%, 
-    65% 100%, 
-    60% 98%, 
-    55% 100%, 
-    50% 98%, 
-    45% 100%, 
-    40% 98%, 
-    35% 100%, 
-    30% 98%, 
-    25% 100%, 
-    20% 98%, 
-    15% 100%, 
-    10% 98%, 
-    5% 100%, 
-    0% 100%
-  );
+  /* REMOVED CLIP-PATH - CAUSES BLUR */
 }
 
-.parchment-scroll::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(212, 196, 168, 0.8) 20%, 
-    rgba(212, 196, 168, 0.8) 80%, 
-    transparent 100%);
-}
+/* REMOVED ::before pseudo-element - CAUSES BLUR */
 
-.parchment-scroll::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(212, 196, 168, 0.8) 20%, 
-    rgba(212, 196, 168, 0.8) 80%, 
-    transparent 100%);
-}
+/* REMOVED ::after pseudo-element - CAUSES BLUR */
 
 /* Scroll container with rolled edges */
 .scroll-container {
   position: relative;
-  background: linear-gradient(135deg, #f4f1e8 0%, #e8e0d0 100%);
+  background: #f4f1e8;
   border-radius: 0;
   overflow: visible;
 }
@@ -207,7 +150,7 @@
   height: 40px;
   background: linear-gradient(135deg, #d4c4a8 0%, #c4b498 100%);
   border-radius: 50px 50px 0 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* REMOVED BOX-SHADOW - CAUSES BLUR */
 }
 
 .scroll-container::after {
@@ -220,5 +163,5 @@
   height: 40px;
   background: linear-gradient(135deg, #d4c4a8 0%, #c4b498 100%);
   border-radius: 0 0 50px 50px;
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+  /* REMOVED BOX-SHADOW - CAUSES BLUR */
 }
