@@ -432,10 +432,10 @@ export default function Home() {
                 onLoadStart={() => {
                   console.log('Audio loading started');
                 }}
-                onCanPlay={() => {
+                onCanPlay={(e) => {
                   console.log('Audio can play, duration:', e.currentTarget.duration);
                 }}
-                onLoadedMetadata={() => {
+                onLoadedMetadata={(e) => {
                   console.log('Audio metadata loaded, duration:', e.currentTarget.duration);
                 }}
               />
