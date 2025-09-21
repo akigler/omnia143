@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Updated color tokens for nighttime story theme */
+  --background: oklch(0.2 0.1 200); /* Deep night sky blue */
+  --foreground: oklch(0.98 0 0); /* Pure white text */
+  --card: oklch(0.95 0.02 200); /* Light cyan for cards */
+  --card-foreground: oklch(0.3 0.05 220); /* Dark blue-gray text */
+  --popover: oklch(0.98 0 0); /* White modal background */
+  --popover-foreground: oklch(0.25 0.05 220); /* Dark text for modals */
+  --primary: oklch(0.65 0.15 45); /* Golden amber accent */
+  --primary-foreground: oklch(0.2 0.1 200); /* Dark text on primary */
+  --secondary: oklch(0.96 0.02 10); /* Light rose for subtle elements */
+  --secondary-foreground: oklch(0.25 0.05 220); /* Dark text on secondary */
+  --muted: oklch(0.98 0 0); /* White for muted sections */
+  --muted-foreground: oklch(0.4 0.05 220); /* Medium gray text */
+  --accent: oklch(0.65 0.15 45); /* Golden amber for interactive elements */
+  --accent-foreground: oklch(0.2 0.1 200); /* Dark text on accent */
+  --destructive: oklch(0.55 0.2 25); /* Red for errors */
+  --destructive-foreground: oklch(0.98 0 0); /* White text on destructive */
+  --border: oklch(0.4 0.05 220); /* Medium gray borders */
+  --input: oklch(0.98 0 0); /* White input background */
+  --ring: oklch(0.65 0.15 45 / 0.5); /* Golden focus ring */
+  --chart-1: oklch(0.65 0.15 45); /* Golden chart color */
+  --chart-2: oklch(0.55 0.2 25); /* Red chart color */
+  --chart-3: oklch(0.6 0.18 35); /* Orange chart color */
+  --chart-4: oklch(0.2 0.1 200); /* Deep blue chart color */
+  --chart-5: oklch(0.98 0 0); /* White chart color */
+  --radius: 0.5rem;
+  --sidebar: oklch(0.95 0.02 200);
+  --sidebar-foreground: oklch(0.4 0.05 220);
+  --sidebar-primary: oklch(0.65 0.15 45);
+  --sidebar-primary-foreground: oklch(0.2 0.1 200);
+  --sidebar-accent: oklch(0.55 0.2 25);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.4 0.05 220);
+  --sidebar-ring: oklch(0.65 0.15 45 / 0.5);
+}
+
+.dark {
+  --background: oklch(0.1 0.05 220);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.15 0.05 220);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.15 0.05 220);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.7 0.15 45);
+  --primary-foreground: oklch(0.1 0.05 220);
+  --secondary: oklch(0.2 0.05 220);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.2 0.05 220);
+  --muted-foreground: oklch(0.7 0.02 220);
+  --accent: oklch(0.7 0.15 45);
+  --accent-foreground: oklch(0.1 0.05 220);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.25 0.05 220);
+  --input: oklch(0.2 0.05 220);
+  --ring: oklch(0.7 0.15 45 / 0.5);
+  --chart-1: oklch(0.7 0.15 45);
+  --chart-2: oklch(0.6 0.18 162);
+  --chart-3: oklch(0.75 0.15 70);
+  --chart-4: oklch(0.6 0.2 304);
+  --chart-5: oklch(0.65 0.18 16);
+  --sidebar: oklch(0.15 0.05 220);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.7 0.15 45);
+  --sidebar-primary-foreground: oklch(0.1 0.05 220);
+  --sidebar-accent: oklch(0.2 0.05 220);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.25 0.05 220);
+  --sidebar-ring: oklch(0.7 0.15 45 / 0.5);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar for better accessibility */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.8);
+}
+
+/* Parchment scroll styling */
+.parchment-scroll {
+  background: linear-gradient(135deg, #f4f1e8 0%, #e8e0d0 100%);
+  border: 2px solid #d4c4a8;
+  box-shadow: 
+    0 0 20px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  position: relative;
+  border-radius: 0;
+  clip-path: polygon(
+    0% 0%, 
+    5% 0%, 
+    10% 2%, 
+    15% 0%, 
+    20% 2%, 
+    25% 0%, 
+    30% 2%, 
+    35% 0%, 
+    40% 2%, 
+    45% 0%, 
+    50% 2%, 
+    55% 0%, 
+    60% 2%, 
+    65% 0%, 
+    70% 2%, 
+    75% 0%, 
+    80% 2%, 
+    85% 0%, 
+    90% 2%, 
+    95% 0%, 
+    100% 0%, 
+    100% 100%, 
+    95% 100%, 
+    90% 98%, 
+    85% 100%, 
+    80% 98%, 
+    75% 100%, 
+    70% 98%, 
+    65% 100%, 
+    60% 98%, 
+    55% 100%, 
+    50% 98%, 
+    45% 100%, 
+    40% 98%, 
+    35% 100%, 
+    30% 98%, 
+    25% 100%, 
+    20% 98%, 
+    15% 100%, 
+    10% 98%, 
+    5% 100%, 
+    0% 100%
+  );
+}
+
+.parchment-scroll::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(212, 196, 168, 0.8) 20%, 
+    rgba(212, 196, 168, 0.8) 80%, 
+    transparent 100%);
+}
+
+.parchment-scroll::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(212, 196, 168, 0.8) 20%, 
+    rgba(212, 196, 168, 0.8) 80%, 
+    transparent 100%);
+}
+
+/* Scroll container with rolled edges */
+.scroll-container {
+  position: relative;
+  background: linear-gradient(135deg, #f4f1e8 0%, #e8e0d0 100%);
+  border-radius: 0;
+  overflow: visible;
+}
+
+.scroll-container::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 40px;
+  background: linear-gradient(135deg, #d4c4a8 0%, #c4b498 100%);
+  border-radius: 50px 50px 0 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-container::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 40px;
+  background: linear-gradient(135deg, #d4c4a8 0%, #c4b498 100%);
+  border-radius: 0 0 50px 50px;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
