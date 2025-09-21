@@ -224,6 +224,14 @@ export default function Home() {
     
     // Force reload the audio when modal opens
     audio.load()
+    
+    // Set up a timeout to check if audio loaded
+    const checkAudioLoad = setTimeout(() => {
+      if (audio.duration === 0 || isNaN(audio.duration)) {
+        console.warn('Audio still not loaded after timeout, trying to reload...');
+        audio.load();
+      }
+    }, 2000);
 
     const handleTimeUpdate = () => {
       if (audio.duration) {
@@ -253,6 +261,7 @@ export default function Home() {
     audio.addEventListener('error', handleError)
 
     return () => {
+      clearTimeout(checkAudioLoad)
       audio.removeEventListener('timeupdate', handleTimeUpdate)
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
       audio.removeEventListener('ended', handleEnded)
@@ -358,7 +367,7 @@ export default function Home() {
             
             <div className="text-center">
               {/* Background Image */}
-              <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden">
+              <div className="relative w-64 h-64 mx-auto rounded-lg shadow-lg mb-6 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
                 <img
                   src="/images/ghostrunner.jpg"
                   alt="Audio Background"
@@ -371,6 +380,13 @@ export default function Home() {
                     console.log('Image loaded successfully');
                   }}
                 />
+                {/* Fallback gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <div className="text-white text-center">
+                    <div className="text-4xl mb-2">🎵</div>
+                    <div className="text-sm">Audio Story</div>
+                  </div>
+                </div>
               </div>
 
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Audio Story</h3>
@@ -407,15 +423,20 @@ export default function Home() {
               <audio
                 ref={audioRef}
                 src="/audio/Ghostrunner Daniel Deluxe The orb  Soundtrack.mp3"
-                preload="metadata"
+                preload="auto"
+                crossOrigin="anonymous"
                 onError={(e) => {
                   console.error('Audio failed to load:', e);
+                  console.error('Audio src:', e.currentTarget.src);
                 }}
                 onLoadStart={() => {
                   console.log('Audio loading started');
                 }}
                 onCanPlay={() => {
-                  console.log('Audio can play');
+                  console.log('Audio can play, duration:', e.currentTarget.duration);
+                }}
+                onLoadedMetadata={() => {
+                  console.log('Audio metadata loaded, duration:', e.currentTarget.duration);
                 }}
               />
             </div>
