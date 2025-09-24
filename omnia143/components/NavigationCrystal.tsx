@@ -110,13 +110,6 @@ export default function NavigationCrystal() {
               </div>
             </div>
 
-            <button
-              onClick={closeModal}
-              className="absolute -top-4 -right-4 text-gray-400 hover:text-gray-200 text-4xl font-bold"
-              aria-label="Close modal"
-            >
-              ×
-            </button>
           </div>
         </div>
       )}
