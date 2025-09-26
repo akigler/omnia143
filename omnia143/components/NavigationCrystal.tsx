@@ -161,15 +161,75 @@ export default function NavigationCrystal() {
             )}
 
             {selectedCrystal === "social" && (
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-white" />
+              <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
+                
+                <div className="relative z-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl">
+                  {/* Header */}
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <Users className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-2">Follow Omnia on socials</h3>
+                    <p className="text-purple-200 text-lg">Connect with our community across all platforms</p>
+                  </div>
+                  
+                  {/* Social Media Icons in a Line */}
+                  <div className="flex justify-center items-center gap-6 flex-wrap">
+                    {[
+                      {
+                        id: "tiktok",
+                        name: "TikTok",
+                        icon: "/socialIcons/icons8-tiktok-50.svg",
+                        color: "from-pink-400 to-pink-600",
+                        url: "https://www.tiktok.com/@sethcosta2?_t=ZP-903FlLHQWqd&_r=1"
+                      },
+                      {
+                        id: "facebook",
+                        name: "Facebook", 
+                        icon: "/socialIcons/icons8-facebook-50.svg",
+                        color: "from-blue-400 to-blue-600",
+                        url: "https://www.facebook.com/share/16yGc2LChz/"
+                      },
+                      {
+                        id: "instagram",
+                        name: "Instagram",
+                        icon: "/socialIcons/icons8-instagram-50.svg", 
+                        color: "from-purple-400 to-purple-600",
+                        url: "https://www.instagram.com/invites/contact/?igsh=182kj74rspjki&utm_content=z1ch3og"
+                      },
+                      {
+                        id: "x",
+                        name: "X",
+                        icon: "/socialIcons/icons8-x-50.svg",
+                        color: "from-gray-400 to-gray-600", 
+                        url: "https://x.com/143_Omnia?t=9Fw4FQ_rh4mw2rJ2njMGuQ&s=09"
+                      },
+                      {
+                        id: "youtube",
+                        name: "YouTube",
+                        icon: "/socialIcons/icons8-youtube-50.svg",
+                        color: "from-red-400 to-red-600",
+                        url: "https://youtube.com/@omnia_143?si=qNwvJwrDt2kluyPF"
+                      }
+                    ].map((social) => (
+                      <a
+                        key={social.id}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`group w-20 h-20 ${social.color} rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/50`}
+                        aria-label={`Follow us on ${social.name}`}
+                      >
+                        <img 
+                          src={social.icon} 
+                          alt={social.name}
+                          className="w-12 h-12 group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </a>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Social Media</h3>
-                <p className="text-gray-600">
-                  Connect with our community! Share your favorite stories, 
-                  join discussions, and stay updated on new content and events.
-                </p>
               </div>
             )}
 
