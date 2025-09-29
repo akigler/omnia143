@@ -1,8 +1,11 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ScrollText, Eye, Headphones, Play, Pause, SkipBack, SkipForward } from "lucide-react"
+import { ScrollText, Eye, Headphones, Play, Pause, SkipBack, SkipForward, LogOut } from "lucide-react"
 import NavigationCrystal from "@/components/NavigationCrystal"
+import AuthModal from "@/components/AuthModal"
+import LoadingSpinner from "@/components/LoadingSpinner"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface PlanetData {
   id: string
@@ -124,8 +127,10 @@ const placeholderAudio = [
 ]
 
 export default function Home() {
+  const { user, loading, logout } = useAuth()
   const [selectedPlanet, setSelectedPlanet] = useState<PlanetData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [modalPosition, setModalPosition] = useState({ top: "50%", left: "50%" })
   const [activeModal, setActiveModal] = useState<'content' | 'audio' | 'scroll' | null>(null)
   const [currentStory, setCurrentStory] = useState<number>(0)
@@ -135,6 +140,79 @@ export default function Home() {
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
+
+  // Handle audio events - moved before conditional returns
+  useEffect(() => {
+    if (activeModal !== 'audio') return
+
+    const audio = audioRef.current
+    if (!audio) {
+      console.log('No audio element found')
+      return
+    }
+
+    console.log('Setting up audio events for:', audio.src)
+    
+    // Force reload the audio when modal opens
+    audio.load()
+
+    const handleTimeUpdate = () => {
+      if (audio.duration && !isNaN(audio.duration)) {
+        setAudioCurrentTime(audio.currentTime)
+        setAudioProgress((audio.currentTime / audio.duration) * 100)
+      }
+    }
+
+    const handleEnded = () => {
+      setIsPlaying(false)
+      setAudioProgress(0)
+      setAudioCurrentTime(0)
+    }
+
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e)
+      console.error('Audio src:', audio.src)
+      console.error('Audio readyState:', audio.readyState)
+    }
+
+    const handleLoadedMetadata = () => {
+      console.log('Audio metadata loaded, duration:', audio.duration)
+      setAudioDuration(audio.duration)
+    }
+
+    const handleCanPlay = () => {
+      console.log('Audio can play, duration:', audio.duration)
+      setAudioDuration(audio.duration)
+    }
+
+    audio.addEventListener('timeupdate', handleTimeUpdate)
+    audio.addEventListener('ended', handleEnded)
+    audio.addEventListener('error', handleError)
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+    audio.addEventListener('canplay', handleCanPlay)
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate)
+      audio.removeEventListener('ended', handleEnded)
+      audio.removeEventListener('error', handleError)
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.removeEventListener('canplay', handleCanPlay)
+    }
+  }, [activeModal])
+
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return <LoadingSpinner />
+  }
+
+  // Show auth modal if user is not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+        <AuthModal isOpen={true} onClose={() => {}} />
+      </div>
+    )
+  }
 
   const handlePlanetClick = (planet: PlanetData) => {
     setSelectedPlanet(planet)
@@ -210,64 +288,6 @@ export default function Home() {
     }
   }
 
-  // Handle audio events
-  useEffect(() => {
-    if (activeModal !== 'audio') return
-
-    const audio = audioRef.current
-    if (!audio) {
-      console.log('No audio element found')
-      return
-    }
-
-    console.log('Setting up audio events for:', audio.src)
-    
-    // Force reload the audio when modal opens
-    audio.load()
-
-    const handleTimeUpdate = () => {
-      if (audio.duration && !isNaN(audio.duration)) {
-        setAudioCurrentTime(audio.currentTime)
-        setAudioProgress((audio.currentTime / audio.duration) * 100)
-      }
-    }
-
-    const handleEnded = () => {
-      setIsPlaying(false)
-      setAudioProgress(0)
-      setAudioCurrentTime(0)
-    }
-
-    const handleError = (e: Event) => {
-      console.error('Audio error:', e)
-      console.error('Audio src:', audio.src)
-      console.error('Audio readyState:', audio.readyState)
-    }
-
-    const handleLoadedMetadata = () => {
-      console.log('Audio metadata loaded, duration:', audio.duration)
-      setAudioDuration(audio.duration)
-    }
-
-    const handleCanPlay = () => {
-      console.log('Audio can play, duration:', audio.duration)
-      setAudioDuration(audio.duration)
-    }
-
-    audio.addEventListener('timeupdate', handleTimeUpdate)
-    audio.addEventListener('ended', handleEnded)
-    audio.addEventListener('error', handleError)
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
-    audio.addEventListener('canplay', handleCanPlay)
-
-    return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate)
-      audio.removeEventListener('ended', handleEnded)
-      audio.removeEventListener('error', handleError)
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
-      audio.removeEventListener('canplay', handleCanPlay)
-    }
-  }, [activeModal])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden">
@@ -276,7 +296,22 @@ export default function Home() {
 
       {/* Header */}
       <header className="relative z-10 pt-8 pb-4 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-3 text-balance">Omnia</h1>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex-1"></div>
+          <div className="flex-1 text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-3 text-balance">Omnia</h1>
+          </div>
+          <div className="flex-1 flex justify-end">
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          </div>
+        </div>
         <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto text-pretty">
           Journey through enchanted realms of stories, audio adventures, and visual tales under the starlit sky
         </p>
