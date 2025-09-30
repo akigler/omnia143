@@ -98,7 +98,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
             <Image 
-              src="/images/omnia-logo.png" 
+              src="/images/omnia-logo.webp" 
               alt="Omnia" 
               width={256}
               height={256}
