@@ -16,8 +16,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetMessage, setResetMessage] = useState('')
 
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth()
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,11 +55,30 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
   }
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setResetMessage('')
+    setLoading(true)
+
+    try {
+      await resetPassword(resetEmail)
+      setResetMessage('Password reset email sent! Check your inbox.')
+    } catch (error: any) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const resetForm = () => {
     setEmail('')
     setPassword('')
     setError('')
     setShowPassword(false)
+    setResetEmail('')
+    setResetMessage('')
+    setShowForgotPassword(false)
   }
 
   const toggleMode = () => {
@@ -70,22 +92,21 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       
-      <div className="relative z-10 bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition-colors"
-          aria-label="Close modal"
-        >
-          ×
-        </button>
+      <div className="relative z-10 bg-transparent rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
 
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            {isLogin ? 'Welcome Back' : 'Join Omnia'}
-          </h2>
-          <p className="text-gray-600">
-            {isLogin ? 'Sign in to continue your journey' : 'Create an account to begin your adventure'}
-          </p>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/images/omnia-logo.png" 
+              alt="Omnia" 
+              className="w-64 h-64 object-contain"
+            />
+          </div>
+          {!isLogin && (
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Join Omnia
+            </h2>
+          )}
         </div>
 
         {/* Google Sign In Button */}
@@ -104,18 +125,69 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </button>
 
         <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+          <div className="flex justify-center text-sm">
+            <span className="px-2 bg-transparent text-gray-300">Or continue with email</span>
           </div>
         </div>
 
-        {/* Email/Password Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Forgot Password Form */}
+        {showForgotPassword ? (
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div>
+              <label htmlFor="resetEmail" className="block text-sm font-medium text-white mb-1">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  id="resetEmail"
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 text-red-600 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </div>
+            )}
+
+            {resetMessage && (
+              <div className="flex items-center gap-2 text-green-600 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                {resetMessage}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Sending...' : 'Send Reset Email'}
+            </button>
+
+            <div className="text-center">
+              <button
+                onClick={() => setShowForgotPassword(false)}
+                className="text-blue-400 hover:text-blue-300 font-medium"
+              >
+                Back to Sign In
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            {/* Email/Password Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-white mb-1">
               Email
             </label>
             <div className="relative">
@@ -133,7 +205,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-white mb-1">
               Password
             </label>
             <div className="relative">
@@ -173,16 +245,31 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </button>
         </form>
 
+          </>
+        )}
+
         <div className="text-center mt-6">
-          <p className="text-gray-600">
+          <p className="text-gray-300 text-lg">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
               onClick={toggleMode}
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-blue-400 hover:text-blue-300 font-medium"
             >
               {isLogin ? 'Sign up' : 'Sign in'}
             </button>
           </p>
+          
+          {/* Forgot Password Link - only show on login */}
+          {isLogin && (
+            <div className="mt-4">
+              <button
+                onClick={() => setShowForgotPassword(true)}
+                className="text-blue-400 hover:text-blue-300 font-medium text-sm"
+              >
+                Forgot your password?
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

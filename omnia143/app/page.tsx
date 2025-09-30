@@ -208,7 +208,7 @@ export default function Home() {
   // Show auth modal if user is not logged in
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-900 flex items-center justify-center">
         <AuthModal isOpen={true} onClose={() => {}} />
       </div>
     )
