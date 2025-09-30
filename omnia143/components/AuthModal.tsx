@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from 'lucide-react'
 
@@ -96,11 +97,23 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
-            <img 
+            <Image 
               src="/images/omnia-logo.png" 
               alt="Omnia" 
-              className="w-64 h-64 object-contain"
+              width={256}
+              height={256}
+              className="object-contain"
+              onError={(e) => {
+                console.error('Logo failed to load:', e);
+                // Fallback to text if image fails
+                e.currentTarget.style.display = 'none';
+                const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'block';
+              }}
             />
+            <div style={{ display: 'none' }} className="text-4xl font-bold text-white">
+              Omnia
+            </div>
           </div>
           {!isLogin && (
             <h2 className="text-2xl font-bold text-white mb-2">
