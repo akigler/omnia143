@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Heart, Search, Settings, Users, Calendar, Info } from "lucide-react"
+import SettingsPage from "./SettingsPage"
 
 const crystalOptions = [
   {
@@ -51,10 +52,16 @@ const crystalOptions = [
 export default function NavigationCrystal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCrystal, setSelectedCrystal] = useState<string | null>(null)
+  const [showSettingsPage, setShowSettingsPage] = useState(false)
 
   const handleCrystalClick = (crystalId: string) => {
-    setSelectedCrystal(crystalId)
-    setIsModalOpen(false)
+    if (crystalId === "settings") {
+      setShowSettingsPage(true)
+      setIsModalOpen(false)
+    } else {
+      setSelectedCrystal(crystalId)
+      setIsModalOpen(false)
+    }
   }
 
   const closeModal = () => {
@@ -62,16 +69,27 @@ export default function NavigationCrystal() {
     setSelectedCrystal(null)
   }
 
+  const handleSettingsBack = () => {
+    setShowSettingsPage(false)
+  }
+
   return (
     <>
+      {/* Settings Page */}
+      {showSettingsPage && (
+        <SettingsPage onBack={handleSettingsBack} />
+      )}
+
       {/* Main Green Crystal Button */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
-        aria-label="Open navigation menu"
-      >
-        <div className="w-8 h-8 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full shadow-inner"></div>
-      </button>
+      {!showSettingsPage && (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="fixed bottom-6 right-6 z-40 w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
+          aria-label="Open navigation menu"
+        >
+          <div className="w-8 h-8 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full shadow-inner"></div>
+        </button>
+      )}
 
       {/* Crystal Selection Modal */}
       {isModalOpen && (
@@ -134,18 +152,6 @@ export default function NavigationCrystal() {
               </div>
             )}
 
-            {selectedCrystal === "settings" && (
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Settings className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Settings</h3>
-                <p className="text-gray-600">
-                  Customize your Omnia experience. Adjust text size, audio volume, 
-                  color themes, and accessibility options to make your journey perfect for you.
-                </p>
-              </div>
-            )}
 
             {selectedCrystal === "search" && (
               <div className="text-center">

@@ -5,6 +5,7 @@ import { ScrollText, Eye, Headphones, Play, Pause, SkipBack, SkipForward, LogOut
 import NavigationCrystal from "@/components/NavigationCrystal"
 import AuthModal from "@/components/AuthModal"
 import LoadingSpinner from "@/components/LoadingSpinner"
+import SettingsPage from "@/components/SettingsPage"
 import { useAuth } from "@/contexts/AuthContext"
 
 interface PlanetData {
@@ -139,7 +140,24 @@ export default function Home() {
   const [audioProgress, setAudioProgress] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
+  const [showFirstTimeSetup, setShowFirstTimeSetup] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
+
+  // Handle first-time setup completion
+  const handleFirstTimeSetupComplete = () => {
+    localStorage.setItem('omnia-setup-completed', 'true')
+    setShowFirstTimeSetup(false)
+  }
+
+  // Check for first-time setup
+  useEffect(() => {
+    if (user && !loading) {
+      const hasCompletedSetup = localStorage.getItem('omnia-setup-completed')
+      if (!hasCompletedSetup) {
+        setShowFirstTimeSetup(true)
+      }
+    }
+  }, [user, loading])
 
   // Handle audio events - moved before conditional returns
   useEffect(() => {
@@ -211,6 +229,17 @@ export default function Home() {
       <div className="min-h-screen bg-blue-900 flex items-center justify-center">
         <AuthModal isOpen={true} onClose={() => {}} />
       </div>
+    )
+  }
+
+  // Show first-time setup if user hasn't completed it
+  if (showFirstTimeSetup) {
+    return (
+      <SettingsPage 
+        onBack={() => {}} 
+        isFirstTime={true} 
+        onComplete={handleFirstTimeSetupComplete} 
+      />
     )
   }
 
