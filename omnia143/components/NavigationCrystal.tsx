@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Heart, Search, Settings, Users, Calendar, Info } from "lucide-react"
 
 const crystalOptions = [
@@ -74,10 +75,16 @@ export default function NavigationCrystal() {
       {/* Main Green Crystal Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
+        className="fixed bottom-6 right-6 z-40 w-24 h-24 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
         aria-label="Open navigation menu"
       >
-        <div className="w-8 h-8 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full shadow-inner"></div>
+        <Image
+          src="/images/emeraldGreen.png"
+          alt="Emerald Green Crystal"
+          width={112}
+          height={112}
+          className="w-[95%] h-[95%]"
+        />
       </button>
 
       {/* Crystal Selection Modal */}
@@ -113,7 +120,13 @@ export default function NavigationCrystal() {
               
               {/* Center Circle */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full shadow-inner"></div>
+                <Image
+                  src="/images/emeraldGreen.png"
+                  alt="Emerald Green Crystal"
+                  width={72}
+                  height={72}
+                  className="w-[90%] h-[90%]"
+                />
               </div>
             </div>
 
@@ -134,9 +147,7 @@ export default function NavigationCrystal() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">About Omnia</h3>
                 <p className="text-gray-600">
-                  Omnia is a magical storytelling platform designed for people with developmental issues. 
-                  We create accessible, engaging experiences through written stories, audio adventures, 
-                  and visual tales under the starlit sky.
+                  The Omnia Foundation corp. is a Made In Vermont nonprofit organization dedicated to empowering children worldwide through mindfully curated and accessible digital content. Rooted in love, peace, compassion, and imagination, our work nurtures curiosity, socio-emotional learning, self-awareness, critical thinking and STEM exploration. We center the needs of children and families, offering free, low-stimulation experiences. All of our offerings are created to support neurodivergent and developmentally diverse communities, promoting a world where every child can access new worlds and learn from archetypes and stories that inspire unity, possibility, and personal growth.
                 </p>
               </div>
             )}
