@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Heart, Search, Settings, Users, Calendar, Info } from "lucide-react"
-import SettingsPage from "./SettingsPage"
 
 const crystalOptions = [
   {
@@ -52,11 +52,11 @@ const crystalOptions = [
 export default function NavigationCrystal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCrystal, setSelectedCrystal] = useState<string | null>(null)
-  const [showSettingsPage, setShowSettingsPage] = useState(false)
+  const router = useRouter()
 
   const handleCrystalClick = (crystalId: string) => {
     if (crystalId === "settings") {
-      setShowSettingsPage(true)
+      router.push('/settings')
       setIsModalOpen(false)
     } else {
       setSelectedCrystal(crystalId)
@@ -69,27 +69,16 @@ export default function NavigationCrystal() {
     setSelectedCrystal(null)
   }
 
-  const handleSettingsBack = () => {
-    setShowSettingsPage(false)
-  }
-
   return (
     <>
-      {/* Settings Page */}
-      {showSettingsPage && (
-        <SettingsPage onBack={handleSettingsBack} />
-      )}
-
       {/* Main Green Crystal Button */}
-      {!showSettingsPage && (
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
-          aria-label="Open navigation menu"
-        >
-          <div className="w-8 h-8 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full shadow-inner"></div>
-        </button>
-      )}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="fixed bottom-6 right-6 z-40 w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
+        aria-label="Open navigation menu"
+      >
+        <div className="w-8 h-8 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full shadow-inner"></div>
+      </button>
 
       {/* Crystal Selection Modal */}
       {isModalOpen && (

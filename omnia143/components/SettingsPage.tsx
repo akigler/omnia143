@@ -363,7 +363,7 @@ export default function SettingsPage({ onBack, isFirstTime = false, onComplete }
               <textarea
                 value={rateMessage}
                 onChange={(e) => setRateMessage(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                 rows={3}
                 placeholder="Tell us what you think..."
               />
@@ -397,7 +397,7 @@ export default function SettingsPage({ onBack, isFirstTime = false, onComplete }
               <textarea
                 value={contactMessage}
                 onChange={(e) => setContactMessage(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                 rows={4}
                 placeholder="How can we help you?"
               />
@@ -431,7 +431,7 @@ export default function SettingsPage({ onBack, isFirstTime = false, onComplete }
               <textarea
                 value={feedbackMessage}
                 onChange={(e) => setFeedbackMessage(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                 rows={4}
                 placeholder="Share your thoughts and suggestions..."
               />
