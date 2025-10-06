@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ScrollText, Eye, Headphones, Play, Pause, SkipBack, SkipForward, LogOut } from "lucide-react"
+import { ScrollText, Eye, Headphones, Play, Pause, ChevronLeft, ChevronRight, LogOut } from "lucide-react"
 import NavigationCrystal from "@/components/NavigationCrystal"
 import AuthModal from "@/components/AuthModal"
 import LoadingSpinner from "@/components/LoadingSpinner"
@@ -317,6 +317,37 @@ export default function Home() {
     }
   }
 
+  const skipBackward = () => {
+    if (audioRef.current) {
+      const newTime = Math.max(0, audioRef.current.currentTime - 5)
+      audioRef.current.currentTime = newTime
+      setAudioCurrentTime(newTime)
+    }
+  }
+
+  const skipForward = () => {
+    if (audioRef.current) {
+      const newTime = Math.min(audioRef.current.duration, audioRef.current.currentTime + 5)
+      audioRef.current.currentTime = newTime
+      setAudioCurrentTime(newTime)
+    }
+  }
+
+  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (audioRef.current && audioRef.current.duration) {
+      const progressBar = e.currentTarget
+      const rect = progressBar.getBoundingClientRect()
+      const clickX = e.clientX - rect.left
+      const progressBarWidth = rect.width
+      const clickPosition = clickX / progressBarWidth
+      const newTime = clickPosition * audioRef.current.duration
+      
+      audioRef.current.currentTime = newTime
+      setAudioCurrentTime(newTime)
+      setAudioProgress((newTime / audioRef.current.duration) * 100)
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden">
@@ -459,7 +490,10 @@ export default function Home() {
               {/* Audio Player */}
               <div className="space-y-4">
                 {/* Progress Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div 
+                  className="w-full bg-gray-200 rounded-full h-2.5 cursor-pointer"
+                  onClick={handleProgressBarClick}
+                >
                   <div
                     className="bg-gradient-to-r from-blue-500 to-purple-600 h-2.5 rounded-full transition-all duration-300"
                     style={{ width: `${audioProgress}%` }}
@@ -472,13 +506,38 @@ export default function Home() {
                   <span>{Math.floor(audioDuration / 60)}:{('0' + Math.floor(audioDuration % 60)).slice(-2)}</span>
                 </div>
 
-                {/* Play/Pause Button */}
-                <div className="flex justify-center">
+                {/* Control Buttons */}
+                <div className="flex justify-center items-center gap-4">
+                  {/* Skip Backward Button */}
+                  <button 
+                    onClick={skipBackward}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-3 shadow-lg hover:scale-105 transition-transform"
+                    title="Skip back 5 seconds"
+                  >
+                    <div className="flex">
+                      <ChevronLeft className="w-4 h-4" />
+                      <ChevronLeft className="w-4 h-4 -ml-2" />
+                    </div>
+                  </button>
+
+                  {/* Play/Pause Button */}
                   <button 
                     onClick={togglePlayPause} 
                     className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-6 shadow-lg hover:scale-105 transition-transform"
                   >
                     {isPlaying ? <Pause className="w-12 h-12" /> : <Play className="w-12 h-12" />}
+                  </button>
+
+                  {/* Skip Forward Button */}
+                  <button 
+                    onClick={skipForward}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-3 shadow-lg hover:scale-105 transition-transform"
+                    title="Skip forward 5 seconds"
+                  >
+                    <div className="flex">
+                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-4 h-4 -ml-2" />
+                    </div>
                   </button>
                 </div>
               </div>
